@@ -5,3 +5,4 @@ obj/
 
 packages/
 !packages/repositories.config
+*.nupkg

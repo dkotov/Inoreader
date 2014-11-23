@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>Inoreader</id>
+    <version>0.1.0</version>
+    <authors>Dmitry Kotov</authors>
+    <owners>Dmitry Kotov</owners>
+    <projectUrl>https://github.com/dkotov/Inoreader</projectUrl>
+    <iconUrl>http://www.inoreader.com/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <title>Inoreader</title>
+    <description>A .NET wrapper for http://www.inoreader.com API</description>
+    <tags>Inoreader API RSS</tags>
+    <dependencies>
+      <dependency id="RestSharp" version="105.0.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Inoreader\bin\Release\Inoreader.dll" target="lib\net40" />
+  </files>
+</package>
