@@ -225,7 +225,11 @@ namespace Inoreader
             }
 
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new InoreaderApiException(response.StatusCode, response.Content);
+            {
+                var parsedResponse = ParseInoreaderResponse(response.Content);
+                var errorMsg = parsedResponse.ContainsKey("Error") ? parsedResponse["Error"] : response.Content;
+                throw new InoreaderApiException(response.StatusCode, errorMsg);
+            }
         }
 
         private static Dictionary<string, string> ParseInoreaderResponse(string response)
