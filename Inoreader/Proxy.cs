@@ -143,7 +143,7 @@ namespace Inoreader
             EditUnifiedTag(null, Constants.ItemTag.Read, itemIds);
         }
 
-        public bool MarkAsRead(string streamIdOrItemStatus, long? onDateMsec = null)
+        public bool MarkAsReadByFilter(string streamIdOrItemStatus, long? onDateMsec = null)
         {
             var request = new RestRequest("/reader/api/0/mark-all-as-read", Method.POST);
             request.AddParameter("s", streamIdOrItemStatus);
@@ -154,7 +154,7 @@ namespace Inoreader
 
         public bool MarkAllAsRead()
         {
-            return MarkAsRead(Constants.ItemTag.AllUnreadItems);
+            return MarkAsReadByFilter(Constants.ItemTag.AllUnreadItems);
         }
 
         public SubscribeResult Subscribe(string url)
