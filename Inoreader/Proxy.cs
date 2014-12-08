@@ -89,7 +89,7 @@ namespace Inoreader
         public StreamItems GetItems(string streamId, int? count = null, bool newestFirst = true, long? startTimeUnix = null, ItemsFilterEnum? filter = null)
         {
             var request = new RestRequest("/reader/atom/{streamId}");
-            request.AddUrlSegment("streamId", streamId);
+            request.AddUrlSegment("streamId", streamId ?? string.Empty);
             if (count.HasValue) request.AddParameter("n", count.Value);
             if (!newestFirst) request.AddParameter("r", "o");
             if (startTimeUnix.HasValue) request.AddParameter("ot", startTimeUnix.Value);
