@@ -30,7 +30,7 @@ namespace Inoreader.Utils
                     throw new NotSupportedException();
             }
 
-            return new Parameter { Name = name, Value = value };
+            return new Parameter { Name = name, Value = value, Type = ParameterType.GetOrPost };
         }
 
         public static string UnifyCustomTagName(string tagName)
