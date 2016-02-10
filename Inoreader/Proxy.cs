@@ -13,19 +13,31 @@ namespace Inoreader
 {
     public class Proxy
     {
+        private readonly string appId;
+        private readonly string appKey;
         private readonly string _username;
         private readonly string _password;
         
         public string Token { get; private set; }
 
-        public Proxy(string username, string password)
+        public Proxy(string appId, string appKey, string username, string password)
         {
+            if (appId == null) throw new ArgumentNullException(nameof(appId));
+            if (appKey == null) throw new ArgumentNullException(nameof(appKey));
+
+            this.appId = appId;
+            this.appKey = appKey;
             _username = username;
             _password = password;
         }
 
-        public Proxy(string token)
+        public Proxy(string appId, string appKey, string token)
         {
+            if (appId == null) throw new ArgumentNullException(nameof(appId));
+            if (appKey == null) throw new ArgumentNullException(nameof(appKey));
+
+            this.appId = appId;
+            this.appKey = appKey;
             Token = token;
         }
 
@@ -206,6 +218,8 @@ namespace Inoreader
 
         private T Execute<T>(IRestRequest request) where T : new()
         {
+            request.AddHeader("AppId", this.appId);
+            request.AddHeader("AppKey", this.appKey);
             IRestResponse<T> response = null;
             Execute(client => response = client.Execute<T>(request));
             return response.Data;
