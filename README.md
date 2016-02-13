@@ -15,7 +15,6 @@ PM> Install-Package Inoreader
 var inoreader = new Inoreader.Proxy("appId", "appKey");
 
 // 1. authenticate with username/password
-var inoreader = new Inoreader.Proxy("username", "password");
 inoreader.Authenticate("username", "password");
 inoreader.Token; // => "G2UlCa...Fx"
 
