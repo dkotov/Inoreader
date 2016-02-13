@@ -1,6 +1,6 @@
 ## .NET wrapper for [Inoreader](http://inoreader.com) API 
 
-See Inoreader official API documentation [here](http://wiki.inoreader.com/doku.php?id=api).
+See Inoreader official API documentation [here](http://www.inoreader.com/developers).
 
 ### Installation
 
@@ -12,12 +12,15 @@ PM> Install-Package Inoreader
 ### Usage
 
 ```c#
-// 1. init with username/password
-var inoreader = new Inoreader.Proxy("username", "password");
-var token = inoreader.Authenticate(); // token => inoreader.Token => "G2UlCa...Fx"
+var inoreader = new Inoreader.Proxy("appId", "appKey");
 
-// 2. init with token
-inoreader = new Inoreader.Proxy("yourtoken");
+// 1. authenticate with username/password
+var inoreader = new Inoreader.Proxy("username", "password");
+inoreader.Authenticate("username", "password");
+inoreader.Token; // => "G2UlCa...Fx"
+
+// 2. authenticate with token
+inoreader.Authenticate("yourtoken");
 inoreader.Token; // => "yourtoken"
 
 // 3. get user info

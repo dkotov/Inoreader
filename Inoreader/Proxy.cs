@@ -13,52 +13,46 @@ namespace Inoreader
 {
     public class Proxy
     {
-        private readonly string appId;
-        private readonly string appKey;
-        private readonly string _username;
-        private readonly string _password;
+        private readonly string _appId;
+        private readonly string _appKey;
 
         public string Token { get; private set; }
 
-        public Proxy(string appId, string appKey, string username, string password)
+        public Proxy(string appId, string appKey)
         {
-            if (appId == null) throw new ArgumentNullException(nameof(appId));
-            if (appKey == null) throw new ArgumentNullException(nameof(appKey));
+            if (string.IsNullOrEmpty(appId))
+                throw new ArgumentNullException("appId");
+            if (string.IsNullOrEmpty(appKey))
+                throw new ArgumentNullException("appKey");
 
-            this.appId = appId;
-            this.appKey = appKey;
-            _username = username;
-            _password = password;
+            _appId = appId;
+            _appKey = appKey;
         }
 
-        public Proxy(string appId, string appKey, string token)
+        public void Authenticate(string username, string password)
         {
-            if (appId == null) throw new ArgumentNullException(nameof(appId));
-            if (appKey == null) throw new ArgumentNullException(nameof(appKey));
-
-            this.appId = appId;
-            this.appKey = appKey;
-            Token = token;
-        }
-
-        public string Authenticate()
-        {
-            if (string.IsNullOrEmpty(_username))
+            if (string.IsNullOrEmpty(username))
                 throw new ArgumentException("username");
-            if (string.IsNullOrEmpty(_password))
+            if (string.IsNullOrEmpty(password))
                 throw new ArgumentException("password");
 
             var request = new RestRequest("/accounts/ClientLogin", Method.POST);
-            request.AddParameter("Email", _username);
-            request.AddParameter("Passwd", _password);
+            request.AddParameter("Email", username);
+            request.AddParameter("Passwd", password);
 
             var response = Execute(request);
             var results = ParseInoreaderResponse(response.Content);
 
             if (results.ContainsKey("Auth"))
-                Token = results["Auth"];
+                Authenticate(results["Auth"]);
+        }
 
-            return Token;
+        public void Authenticate(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                throw new ArgumentException("token");
+
+            Token = token;
         }
 
         public UserInfo GetUserInfo()
@@ -211,29 +205,26 @@ namespace Inoreader
 
         private IRestResponse Execute(IRestRequest request)
         {
-            request.AddHeader("AppId", this.appId);
-            request.AddHeader("AppKey", this.appKey);
-            IRestResponse response = null;
-            Execute(client => response = client.Execute(request));
+            var response = Execute<IRestResponse>(request, client => client.Execute);
             return response;
         }
 
         private T Execute<T>(IRestRequest request) where T : new()
         {
-            request.AddHeader("AppId", this.appId);
-            request.AddHeader("AppKey", this.appKey);
-            IRestResponse<T> response = null;
-            Execute(client => response = client.Execute<T>(request));
+            var response = Execute<IRestResponse<T>>(request, client => client.Execute<T>);
             return response.Data;
         }
 
-        private void Execute(Func<RestClient, IRestResponse> runRequest)
+        private TResponse Execute<TResponse>(IRestRequest request, Func<RestClient, Func<IRestRequest, TResponse>> runRequest) where TResponse : IRestResponse
         {
+            request.AddHeader("AppId", this._appId);
+            request.AddHeader("AppKey", this._appKey);
+
             var client = new RestClient(Constants.BaseUrl);
             if (!string.IsNullOrEmpty(Token))
                 client.Authenticator = new GoogleAuthenticator(Token);
 
-            var response = runRequest(client);
+            var response = runRequest(client)(request);
             if (response.ErrorException != null)
             {
                 const string message = "Error retrieving response. Check inner details for more info.";
@@ -246,6 +237,8 @@ namespace Inoreader
                 var errorMsg = parsedResponse.ContainsKey("Error") ? parsedResponse["Error"] : response.Content;
                 throw new InoreaderApiException(response.StatusCode, errorMsg);
             }
+
+            return response;
         }
 
         private static Dictionary<string, string> ParseInoreaderResponse(string response)

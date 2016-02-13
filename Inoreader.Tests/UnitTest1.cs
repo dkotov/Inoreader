@@ -10,9 +10,9 @@ namespace Inoreader.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            var inoreader = new Inoreader.Proxy("username", "password");
-            var token = inoreader.Authenticate();
-            Assert.IsNotNull(token);
+            var inoreader = new Inoreader.Proxy("appId", "appKey");
+            inoreader.Authenticate("username", "password");
+            Assert.IsNotNull(inoreader.Token);
 
             var stream = inoreader.GetSubscriptions().First();
             var unreadItems = inoreader.GetItems(stream.Id, filter: ItemsFilterEnum.OnlyUnread, count: 1);
